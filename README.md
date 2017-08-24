@@ -51,7 +51,7 @@ I tried using the mean µ and the standard deviation σ to rescale the images so
 
 My model is based off LeNet.  The final model consisted of the following layers:
 
-| Layer           | Description                                       | 
+| Layer           |     Description 	                              | 
 |:----------------|:--------------------------------------------------| 
 | Input           | 32x32x3 RGB image                                 |
 | Convolution 5x5 | 1x1 stride, `VALID` padding, outputs 28x28x6      |
@@ -85,24 +85,33 @@ For dropout, I used `keep_prob = 0.9` when training, which I found delivered bet
 
 ### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
+I started with the LeNet model, making 2 simple modifications so that it is applicable to this problem:
+
+1. I modified it to accept an input with a depth of 3 (32x32x3) instead of 1 (32x32x1), since we are working with RGB images and not grayscale images.  
+2. I changed the length of the output to 43 (the number of sign types), not 10 (the number of digits).
+
+I chose to use LeNet as a starting point for this problem because it was designed for image classification (specifically, handwritten digits) on small images (32x32), and so I felt that it should work well for classifying traffic signs in small images (again, 32x32).  One of the reasons why LeNet performs well at its image classification task is due to its use of convolutional layers, as they are translation invariant and can detect features regardless of where they are in the image.  However, while the input for LeNet are grayscale images, I opted to use color images as my input because the color of the signs should provide useful information for classifying them.  I also introduced dropout into the model in order to achieve higher accuracy.  
+
+From here, the following table details in chronological order the steps that I took to arrive at my final model:
+
+| Batch Size | Learn rate | Epochs | Dropout           | Pooling                         | Training Accuracy | Validation Accuracy |
+|:-----------|:-----------|:-------|:------------------|:--------------------------------|:------------------|:--------------------|
+| 128        | 0.001      | 10     | None              | k=2, 2x2 stride, `SAME` padding | 0.993             | 0.907               |
+| 128        | 0.01       | 10     | None              | k=2, 2x2 stride, `SAME` padding | 0.945             | 0.872               |
+| 128        | 0.001      | 50     | None              | k=2, 2x2 stride, `SAME` padding | 1.000             | 0.940               |
+| 128        | 0.0001     | 50     | None              | k=2, 2x2 stride, `SAME` padding | 0.988             | 0.874               |
+| 128        | 0.001      | 50     | `keep_prob = 0.5` | k=2, 2x2 stride, `SAME` padding | 0.816             | 0.766               |
+| 128        | 0.001      | 50     | `keep_prob = 0.9` | k=2, 2x2 stride, `SAME` padding | 1.000             | 0.956               |
+
+
+Only when I was satisfied with the validation accuracy did I evaluate my model on the test set.  Thus, the test set had no influence on the selection and training of the model.  
+
+
 My final model results were:
 
 * training set accuracy of 100.0%
 * validation set accuracy of 95.6%
 * test set accuracy of 94.8%
-
-
-
-My model is based off the LeNet model.  The main differences are:
-
-* the input has a depth of 3 (RGB images), not 1 (grayscale images)
-* the inclusion of dropout
-* the output layer has a length of 43 (the number of sign types), not 10 (the number of digits)
-
-
-As LeNet was designed for image classification (specifically, handwritten digits), I felt it was a good choice to use as a base for this traffic sign classification model.  However, while the input for LeNet are grayscale images, I opted to use (normalized) color images as my input because the color of the signs should provide useful information for classifying them.  
-
-I used convolutional layers because they are translation invariant and can detect features regardless of where they are in the image.  I used max pooling to transform the layers from wide and shallow to narrow and deep.  And I used dropout to combat overtraining and to force the model to develop redundant ways to detect features.  
 
 
 
@@ -133,7 +142,7 @@ Here are the results of the prediction:
 | (18) General caution                       | (18) General caution                       |
 
 
-The model was able to correctly classify all 5 of the traffic signs.  
+The model achieved 100% accuracy on this new set of images, which is consistent with the 95.6% and 94.8% accuracies that it achieved on the validation and testing sets, respectively.  Given the simplicity of the images, it would be worrisome if the model incorrectly labeled any of the traffic signs.  
 
 
 
